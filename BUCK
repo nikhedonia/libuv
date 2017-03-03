@@ -25,7 +25,7 @@ unix_common = [
 ]
 
 cxx_library(
-  name = 'uv',
+  name = 'libuv',
   header_namespace = '',
   exported_headers = subdir_glob([
     ('include', '*.h'),
@@ -34,19 +34,19 @@ cxx_library(
     ('src', '*.h'),
   ]),
   platform_headers = [
-    ('.*', subdir_glob([('src/unix', '**/*.h')])),
-    ('macosx', glob(['src/unix/darwin.h'])),
-    ('linux', subdir_glob([('src/unix', '**/*.h')])),
-    ('windows', glob(['src/win/**/*.h'])),
+    ('default', subdir_glob([('src/unix', '**/*.h')])),
+    ('^macosx.*', glob(['src/unix/darwin.h'])),
+    ('^linux.*', subdir_glob([('src/unix', '**/*.h')])),
+    ('^windows.*', glob(['src/win/**/*.h'])),
   ],
   srcs = glob([
     'src/*.c',
   ]),
   platform_srcs = [
-    ('.*', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
-    ('macos', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
-    ('linux', glob(['src/unix/**/*.c'])),
-    ('windows', glob(['src/win/**/*.c'])),
+    ('default', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
+    ('^macos.*', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
+    ('^linux.*', glob(['src/unix/**/*.c'])),
+    ('^windows.*', glob(['src/win/**/*.c'])),
   ],
   compiler_flags = [
     '-std=c11',
@@ -63,10 +63,10 @@ cxx_binary(
     ('test', 'runner.h'),
   ]),
   platform_headers = [
-    ('.*', glob(['test/*-unix.h'])),
-    ('macos', glob(['test/*-unix.h'])),
-    ('linux', glob(['test/*-unix.h'])),
-    ('windows', glob(['test/*-win.h'])),
+    ('default', glob(['test/*-unix.h'])),
+    ('^macos.*', glob(['test/*-unix.h'])),
+    ('^linux.*', glob(['test/*-unix.h'])),
+    ('^windows.*', glob(['test/*-win.h'])),
   ],
   srcs = glob([
     'test/run-tests.c',
@@ -79,13 +79,13 @@ cxx_binary(
     'test/*-win.c',
   ])),
   platform_srcs = [
-    ('.*', glob(['test/*-unix.c'])),
-    ('macos', glob(['test/*-unix.c'])),
-    ('linux', glob(['test/*-unix.c'])),
-    ('windows', glob(['test/*-win.c'])),
+    ('default', glob(['test/*-unix.c'])),
+    ('^macos.*', glob(['test/*-unix.c'])),
+    ('^linux.*', glob(['test/*-unix.c'])),
+    ('^windows.*', glob(['test/*-win.c'])),
   ],
   deps = [
-    ':uv',
+    ':libuv',
   ],
 )
 
@@ -96,10 +96,10 @@ cxx_binary(
     ('test', 'runner.h'),
   ]),
   platform_headers = [
-    ('.*', glob(['test/*-unix.h'])),
-    ('macos', glob(['test/*-unix.h'])),
-    ('linux', glob(['test/*-unix.h'])),
-    ('windows', glob(['test/*-win.h'])),
+    ('default', glob(['test/*-unix.h'])),
+    ('^macos.*', glob(['test/*-unix.h'])),
+    ('^linux.*', glob(['test/*-unix.h'])),
+    ('^windows.*', glob(['test/*-win.h'])),
   ],
   srcs = glob([
     'test/run-benchmarks.c',
@@ -113,12 +113,12 @@ cxx_binary(
     'test/*-win.c',
   ])),
   platform_srcs = [
-    ('.*', glob(['test/*-unix.c'])),
-    ('macos', glob(['test/*-unix.c'])),
-    ('linux', glob(['test/*-unix.c'])),
-    ('windows', glob(['test/*-win.c'])),
+    ('default', glob(['test/*-unix.c'])),
+    ('^macos.*', glob(['test/*-unix.c'])),
+    ('^linux.*', glob(['test/*-unix.c'])),
+    ('^windows.*', glob(['test/*-win.c'])),
   ],
   deps = [
-    ':uv',
+    ':libuv',
   ],
 )
