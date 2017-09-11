@@ -3,18 +3,14 @@ unix_common = [
   'src/unix/core.c',
   'src/unix/dl.c',
   'src/unix/fs.c',
-  'src/unix/fsevents.c',
   'src/unix/getaddrinfo.c',
   'src/unix/getnameinfo.c',
-  'src/unix/kqueue.c',
   'src/unix/loop-watcher.c',
   'src/unix/loop.c',
   'src/unix/pipe.c',
   'src/unix/poll.c',
   'src/unix/process.c',
   'src/unix/proctitle.c',
-  'src/unix/pthread-barrier.c',
-  'src/unix/pthread-fixes.c',
   'src/unix/signal.c',
   'src/unix/stream.c',
   'src/unix/tcp.c',
@@ -43,10 +39,33 @@ cxx_library(
     'src/*.c',
   ]),
   platform_srcs = [
-    ('default', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
-    ('^macos.*', unix_common + ['src/unix/darwin.c', 'src/unix/darwin-proctitle.c']),
-    ('^linux.*', glob(['src/unix/**/*.c'])),
+    ('default', unix_common +[
+      'src/unix/pthread-barrier.c',
+      'src/unix/pthread-fixes.c',
+      'src/unix/kqueue.c',
+      'src/unix/fsevents.c',
+      'src/unix/darwin.c',
+      'src/unix/darwin-proctitle.c']),
+
+    ('^macos.*', unix_common + [
+      'src/unix/pthread-barrier.c',
+      'src/unix/pthread-fixes.c',
+      'src/unix/kqueue.c',
+      'src/unix/fsevents.c',
+      'src/unix/darwin.c',
+      'src/unix/darwin-proctitle.c']),
+
+    ('^linux.*', unix_common + [
+      'src/unix/linux-syscalls.c',
+      'src/unix/linux-inotify.c',
+      'src/unix/linux-core.c']),
     ('^windows.*', glob(['src/win/**/*.c'])),
+  ],
+  platform_compiler_flags = [
+    ('^linux.*', ['-D_GNU_SOURCE'])
+  ],
+  exported_platform_linker_flags = [
+    ('^linux.*', ['-lpthread'])
   ],
   compiler_flags = [
     '-std=c11',
@@ -73,7 +92,7 @@ cxx_binary(
     'test/runner.c',
     'test/echo-server.c',
     'test/test-*.c',
-  ], 
+  ],
   excludes = glob([
     'test/*-unix.c',
     'test/*-win.c',
@@ -107,7 +126,7 @@ cxx_binary(
     'test/blackhole-server.c',
     'test/echo-server.c',
     'test/benchmark-*.c',
-  ], 
+  ],
   excludes = glob([
     'test/*-unix.c',
     'test/*-win.c',
